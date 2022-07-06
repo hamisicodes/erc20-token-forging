@@ -1,8 +1,15 @@
-import React from 'react'
-import { Button, Card } from 'react-bootstrap';
+import { React, useState } from "react";
+import { Button, Card } from "react-bootstrap";
 
-
-function Token({ name, balance }) {
+function MintableToken({
+  handleInput,
+  mintAmount,
+  handleMint,
+  name,
+  balance,
+  id,
+}) {
+  const unmintable = ["3", "4", "5", "6"];
   return (
     <Card className="mt-5" style={{ width: "50%" }}>
       <Card.Body>
@@ -10,12 +17,28 @@ function Token({ name, balance }) {
         <Card.Subtitle className="mb-2 text-muted">
           bal: {balance}
         </Card.Subtitle>
-        <input placeholder="100" style={{ width: "10%" }} type="text" />
+        {!unmintable.includes(id) && (
+          <input
+            name={name}
+            value={mintAmount}
+            onChange={(e) => handleInput(e)}
+            style={{ width: "30%" }}
+            type="text"
+          />
+        )}
       </Card.Body>
-      <Button variant="outline-success">MINT</Button>{" "}
-      <Button variant="outline-danger">BURN</Button>{" "}
+      {!unmintable.includes(id) && (
+        <>
+          <Button
+            onClick={(e) => handleMint(mintAmount)}
+            variant="outline-success"
+          >
+            MINT
+          </Button>
+        </>
+      )}
     </Card>
   );
 }
 
-export default Token
+export default MintableToken;
