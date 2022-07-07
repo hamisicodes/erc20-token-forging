@@ -26,7 +26,7 @@ function Burns({
           />
 
           <DropdownButton
-            variant="outline-secondary"
+            variant="outline-dark"
             title={burnCombinations}
             id="input-group-dropdown-2"
             alignRight

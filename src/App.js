@@ -214,6 +214,7 @@ function App() {
             name="Zero"
             balance={balanceOf.zero}
             id="0"
+            image="https://bit.ly/3OSUDjw"
           />
         </Col>
         <Col>
@@ -224,6 +225,7 @@ function App() {
             name="One"
             balance={balanceOf.one}
             id="1"
+            image="https://bit.ly/3amkAc5"
           />
         </Col>
         <Col>
@@ -234,21 +236,42 @@ function App() {
             name="Two"
             balance={balanceOf.two}
             id="2"
+            image="https://bit.ly/3uvNM7r"
           />
         </Col>
       </Row>
       <Row>
         <Col>
-          <MintableToken name="Three" balance={balanceOf.three} id="3" />
+          <MintableToken
+            name="Three"
+            balance={balanceOf.three}
+            id="3"
+            image="https://bit.ly/3aqvEVx"
+          />
         </Col>
         <Col>
-          <MintableToken name="Four" balance={balanceOf.four} id="4" />
+          <MintableToken
+            name="Four"
+            balance={balanceOf.four}
+            id="4"
+            image="https://bit.ly/3nNpa6s"
+          />
         </Col>
         <Col>
-          <MintableToken name="Five" balance={balanceOf.five} id="5" />
+          <MintableToken
+            name="Five"
+            balance={balanceOf.five}
+            id="5"
+            image="https://bit.ly/3OPAbA7"
+          />
         </Col>
         <Col>
-          <MintableToken name="Six" balance={balanceOf.six} id="6" />
+          <MintableToken
+            name="Six"
+            balance={balanceOf.six}
+            id="6"
+            image="https://bit.ly/3Rgdpmu"
+          />
         </Col>
       </Row>
 
