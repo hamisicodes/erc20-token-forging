@@ -30,7 +30,7 @@ function MintableToken({
       {!unmintable.includes(id) && (
         <>
           <Button
-            onClick={(e) => handleMint(mintAmount)}
+            onClick={(e) => handleMint(e, mintAmount, id, name)}
             variant="outline-success"
           >
             MINT

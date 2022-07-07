@@ -11,7 +11,7 @@ function App() {
   const [mintAmount, setMintAmount] = useState({ Zero: "", One: "", Two: "" });
   const [isWalletConnected, setIsWalletConnected] = useState(false);
   const [userAddress, setUserAddress] = useState("");
-  const [error, setError] = useState("")
+  const [error, setError] = useState("");
   const [burnAmount, setBurnAmount] = useState("");
   const [burnCombinations, setBurnCombination] = useState("Combinations");
   const [balanceOf, setBalanceOf] = useState({
@@ -23,12 +23,6 @@ function App() {
     five: 0,
     six: 0,
   });
-
-  const privateKey = process.env.REACT_APP_PRIVATE_KEY;
-  const INFURA_ID = process.env.REACT_APP_INFURA_ID;
-  const provider = new ethers.providers.Web3Provider(window.ethereum);
-  const contract = new Contract(address, abi, provider);
-  // const account = "0xeD54606f329229A604448e4C327E993E8Bd796b2";
 
   const handleSelect = (e) => {
     setBurnCombination(e);
@@ -45,18 +39,11 @@ function App() {
     setBurnAmount(e.target.value);
   };
 
-  const handleBurnCombination = (e, burnCombinations, burnAmount) => {
-    e.preventDefault();
-    setBurnAmount("");
-    setBurnCombination("Combinations");
-  };
-
   const formatEthers = (amount) => ethers.utils.formatEther(amount);
 
   const tokenBalanceHandler = async () => {
-    const signer = provider.getSigner();
-    console.log(`signer: ${signer}`);
-
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const contract = new Contract(address, abi, provider);
     const zero = await contract.balanceOf(userAddress, 0);
     const one = await contract.balanceOf(userAddress, 1);
     const two = await contract.balanceOf(userAddress, 2);
@@ -85,7 +72,6 @@ function App() {
     console.log("Working...");
   };
 
-
   // ethereum and Metamask
 
   const checkIfWalletIsConnected = async () => {
@@ -105,9 +91,76 @@ function App() {
     }
   };
 
-  const handleMint = async (amount) => {
-      console.log(`Minting ${amount} amount`);
-    };
+  const handleMint = async (e, amount, id, name) => {
+    try {
+      if (window.ethereum) {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        const contractWithWallet = new ethers.Contract(address, abi, signer);
+        const txn = await contractWithWallet.mintToken(
+          id,
+          ethers.utils.parseEther(amount)
+        );
+
+        setMintAmount({
+          Zero: "",
+          One: "",
+          Two: "",
+        });
+        await txn.wait();
+        tokenBalanceHandler();
+      } else {
+        setError("Pleae Install a MetaMask wallet");
+      }
+    } catch (error) {
+      setError(error);
+    }
+  };
+
+  const handleBurnCombination = async (e, burnCombinations, burnAmount) => {
+    e.preventDefault();
+    try {
+      if (window.ethereum) {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        const contractWithWallet = new ethers.Contract(address, abi, signer);
+        const amount = ethers.utils.parseEther(burnAmount);
+
+        if (burnCombinations === "Zero and One") {
+          const txn = await contractWithWallet.mintThree(
+            [0, 1],
+            [amount, amount]
+          );
+          await txn.wait();
+        } else if (burnCombinations === "One and Two") {
+          const txn = await contractWithWallet.mintFour(
+            [1, 2],
+            [amount, amount]
+          );
+          await txn.wait();
+        } else if (burnCombinations === "One and Two") {
+          const txn = await contractWithWallet.mintFive(
+            [0, 2],
+            [amount, amount]
+          );
+          await txn.wait();
+        } else if (burnCombinations === "Zero One and Two") {
+          const txn = await contractWithWallet.mintSix(
+            [0, 1, 2],
+            [amount, amount, amount]
+          );
+          await txn.wait();
+        }
+        tokenBalanceHandler();
+        setBurnAmount("");
+        setBurnCombination("Combinations");
+      } else {
+        setError("Pleae Install a MetaMask wallet");
+      }
+    } catch (error) {
+      setError(error);
+    }
+  };
 
   useEffect(() => {
     checkIfWalletIsConnected();
@@ -117,15 +170,13 @@ function App() {
   return (
     <Container fluid>
       <Nav />
-      {isWalletConnected ? (
-        <Alert key="success" variant="success">
-          Wallet connected 🔒
-        </Alert>
-      ) : (
-        <Alert key="danger" variant="danger">
+
+      {error && (
+        <Alert key="danger" variant="danger" dismissible>
           {error}
         </Alert>
       )}
+
       <Row>
         <Col>
           <MintableToken
@@ -166,10 +217,10 @@ function App() {
           <MintableToken name="Four" balance={balanceOf.four} id="4" />
         </Col>
         <Col>
-          <MintableToken name="Five" balance={balanceOf.three} id="5" />
+          <MintableToken name="Five" balance={balanceOf.five} id="5" />
         </Col>
         <Col>
-          <MintableToken name="Six" balance={balanceOf.three} id="6" />
+          <MintableToken name="Six" balance={balanceOf.six} id="6" />
         </Col>
       </Row>
 
