@@ -1,4 +1,4 @@
-export const address = "0x9ba28715676998a2f0ae81e18871ddbd83baa0c9";
+export const address = "0xa2c104576708F315846E931e64FD34d2DaC895D0";
 
 export const abi = [
   {
@@ -304,4 +304,3 @@ export const abi = [
     type: "function",
   },
 ];
-

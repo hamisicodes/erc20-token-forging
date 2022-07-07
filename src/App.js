@@ -73,16 +73,34 @@ function App() {
   };
 
   // ethereum and Metamask
+  const switchNetworkRequest = async () => {
+    await window.ethereum.request({
+      method: "wallet_addEthereumChain",
+      params: [
+        {
+          chainId: "0x89",
+          rpcUrls: ["https://rpc-mainnet.matic.network/"],
+          chainName: "Matic Mainnet",
+          nativeCurrency: {
+            name: "MATIC",
+            symbol: "MATIC",
+            decimals: 18,
+          },
+          blockExplorerUrls: ["https://explorer.matic.network"],
+        },
+      ],
+    });
+  };
 
   const checkIfWalletIsConnected = async () => {
     try {
       if (window.ethereum) {
+        await switchNetworkRequest();
         const [account] = await window.ethereum.request({
           method: "eth_requestAccounts",
         });
         setIsWalletConnected(true);
         setUserAddress(account);
-        console.log("Account Connected: ", account);
       } else {
         setError("Please install and connect your MetaMask Wallet");
       }
@@ -92,6 +110,7 @@ function App() {
   };
 
   const handleMint = async (e, amount, id, name) => {
+    e.preventDefault();
     try {
       if (window.ethereum) {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -108,7 +127,7 @@ function App() {
           Two: "",
         });
         await txn.wait();
-        tokenBalanceHandler();
+        await tokenBalanceHandler();
       } else {
         setError("Pleae Install a MetaMask wallet");
       }
@@ -151,9 +170,10 @@ function App() {
           );
           await txn.wait();
         }
-        tokenBalanceHandler();
         setBurnAmount("");
         setBurnCombination("Combinations");
+
+        await tokenBalanceHandler();
       } else {
         setError("Pleae Install a MetaMask wallet");
       }
