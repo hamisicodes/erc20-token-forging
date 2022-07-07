@@ -1,6 +1,6 @@
 import "./App.css";
 import { React, useState, useEffect } from "react";
-import { Row, Col, Container, Alert } from "react-bootstrap";
+import { Row, Col, Container, Alert, Spinner } from "react-bootstrap";
 import { Contract, ethers, providers, utils } from "ethers";
 import MintableToken from "./components/Token";
 import Nav from "./components/Navbar";
@@ -9,6 +9,7 @@ import { address, abi } from "./contract/utils";
 
 function App() {
   const [mintAmount, setMintAmount] = useState({ Zero: "", One: "", Two: "" });
+  const [isLoading, setIsLoading] = useState(false);
   const [isWalletConnected, setIsWalletConnected] = useState(false);
   const [userAddress, setUserAddress] = useState("");
   const [error, setError] = useState("");
@@ -120,7 +121,7 @@ function App() {
           id,
           ethers.utils.parseEther(amount)
         );
-
+        setIsLoading(true);
         setMintAmount({
           Zero: "",
           One: "",
@@ -128,6 +129,7 @@ function App() {
         });
         await txn.wait();
         await tokenBalanceHandler();
+        setIsLoading(false);
       } else {
         setError("Pleae Install a MetaMask wallet");
       }
@@ -170,15 +172,19 @@ function App() {
           );
           await txn.wait();
         }
+        setIsLoading(true);
         setBurnAmount("");
         setBurnCombination("Combinations");
 
         await tokenBalanceHandler();
+        setIsLoading(false);
       } else {
         setError("Pleae Install a MetaMask wallet");
       }
     } catch (error) {
-      setError("An error occured during burning, check the data you are passing");
+      setError(
+        "An error occured during burning, check the data you are passing"
+      );
     }
   };
 
@@ -190,6 +196,7 @@ function App() {
   return (
     <Container fluid>
       <Nav />
+      {isLoading && <Spinner animation="grow" />}
 
       {error && (
         <Alert key="danger" variant="danger" dismissible>
