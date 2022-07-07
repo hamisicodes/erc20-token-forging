@@ -112,6 +112,7 @@ function App() {
 
   const handleMint = async (e, amount, id, name) => {
     e.preventDefault();
+    
     try {
       if (window.ethereum) {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -134,7 +135,7 @@ function App() {
         setError("Pleae Install a MetaMask wallet");
       }
     } catch (error) {
-      setError("One Minute cool down required between mints");
+      setError("An error occured. Also allow a Minute cool down between mints!");
     }
   };
 
