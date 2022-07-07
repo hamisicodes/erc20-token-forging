@@ -132,7 +132,7 @@ function App() {
         setError("Pleae Install a MetaMask wallet");
       }
     } catch (error) {
-      setError(error);
+      setError("One Minute cool down required between mints");
     }
   };
 
@@ -178,7 +178,7 @@ function App() {
         setError("Pleae Install a MetaMask wallet");
       }
     } catch (error) {
-      setError(error);
+      setError("An error occured during burning, check the data you are passing");
     }
   };
 
