@@ -6,8 +6,11 @@ import MintableToken from "./components/Token";
 import Nav from "./components/Navbar";
 import Burns from "./components/Burns";
 import { address, abi } from "./contract/utils";
+import CustomModal from "./components/Modal";
 
 function App() {
+  const [show, setShow] = useState(false);
+  const [tokenId, setTokenId] = useState("");
   const [mintAmount, setMintAmount] = useState({ Zero: "", One: "", Two: "" });
   const [isLoading, setIsLoading] = useState(false);
   const [isWalletConnected, setIsWalletConnected] = useState(false);
@@ -29,6 +32,13 @@ function App() {
     setBurnCombination(e);
   };
 
+  const handleShow = (id) => {
+    setShow(true);
+    setTokenId(id);
+  }
+
+  const handleClose = () => setShow(false);
+
   const handleInput = (e) => {
     setMintAmount((prevFormData) => ({
       ...prevFormData,
@@ -39,6 +49,11 @@ function App() {
   const handleBurnAmount = (e) => {
     setBurnAmount(e.target.value);
   };
+
+  const handleTrade = () => {
+    console.log("submiitted");
+  }
+
 
   const formatEthers = (amount) => ethers.utils.formatEther(amount);
 
@@ -112,7 +127,7 @@ function App() {
 
   const handleMint = async (e, amount, id, name) => {
     e.preventDefault();
-    
+
     try {
       if (window.ethereum) {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -135,7 +150,9 @@ function App() {
         setError("Pleae Install a MetaMask wallet");
       }
     } catch (error) {
-      setError("An error occured. Also allow a Minute cool down between mints!");
+      setError(
+        "An error occured. Also allow a Minute cool down between mints!"
+      );
     }
   };
 
@@ -196,6 +213,7 @@ function App() {
 
   return (
     <Container fluid>
+      <CustomModal show={show} tokenId={tokenId} handleClose={handleClose} />
       <Nav />
       {isLoading && <Spinner animation="grow" />}
 
@@ -247,6 +265,8 @@ function App() {
             balance={balanceOf.three}
             id="3"
             image="https://bit.ly/3aqvEVx"
+            handleShow={handleShow}
+            handleTrade={handleTrade}
           />
         </Col>
         <Col>
@@ -255,6 +275,8 @@ function App() {
             balance={balanceOf.four}
             id="4"
             image="https://bit.ly/3nNpa6s"
+            handleShow={handleShow}
+            handleTrade={handleTrade}
           />
         </Col>
         <Col>
@@ -263,6 +285,8 @@ function App() {
             balance={balanceOf.five}
             id="5"
             image="https://bit.ly/3OPAbA7"
+            handleShow={handleShow}
+            handleTrade={handleTrade}
           />
         </Col>
         <Col>
@@ -271,6 +295,8 @@ function App() {
             balance={balanceOf.six}
             id="6"
             image="https://bit.ly/3Rgdpmu"
+            handleShow={handleShow}
+            handleTrade={handleTrade}
           />
         </Col>
       </Row>
