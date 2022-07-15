@@ -1,5 +1,5 @@
 import "./App.css";
-import { React, useState, useEffect } from "react";
+import { React, useState, useEffect, useStateCallback } from "react";
 import { Row, Col, Container, Alert, Spinner } from "react-bootstrap";
 import { Contract, ethers, providers, utils } from "ethers";
 import MintableToken from "./components/Token";
@@ -10,6 +10,8 @@ import CustomModal from "./components/Modal";
 
 function App() {
   const [show, setShow] = useState(false);
+  const [tokenToTradeFor, setTokenToTradeFor] = useState("0");
+  const [tradeAmount, setTradeAmount] = useState("");
   const [tokenId, setTokenId] = useState("");
   const [mintAmount, setMintAmount] = useState({ Zero: "", One: "", Two: "" });
   const [isLoading, setIsLoading] = useState(false);
@@ -32,10 +34,17 @@ function App() {
     setBurnCombination(e);
   };
 
+  const handleTradeTokenSelect = (e) => {
+    setTokenToTradeFor(e.target.value);
+  };
+
+  const handleTradeAmount = (e) => {
+    setTradeAmount(e.target.value);
+  };
   const handleShow = (id) => {
     setShow(true);
     setTokenId(id);
-  }
+  };
 
   const handleClose = () => setShow(false);
 
@@ -50,10 +59,21 @@ function App() {
     setBurnAmount(e.target.value);
   };
 
-  const handleTrade = () => {
-    console.log("submiitted");
-  }
-
+  const handleTrade = async (from, to, amount) => {
+    try {
+      if (window.ethereum) {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        const contractWithWallet = new ethers.Contract(address, abi, signer);
+        const parsedAmount = ethers.utils.parseEther(amount);
+        const txn = await contractWithWallet.tradeToken(from, to, parsedAmount);
+        await txn.wait();
+        await tokenBalanceHandler();
+        handleClose();
+        setIsLoading(false);
+      }
+    } catch (error) {}
+  };
 
   const formatEthers = (amount) => ethers.utils.formatEther(amount);
 
@@ -85,7 +105,6 @@ function App() {
       five: f_five,
       six: f_six,
     });
-    console.log("Working...");
   };
 
   // ethereum and Metamask
@@ -213,7 +232,16 @@ function App() {
 
   return (
     <Container fluid>
-      <CustomModal show={show} tokenId={tokenId} handleClose={handleClose} />
+      <CustomModal
+        show={show}
+        tokenId={tokenId}
+        handleClose={handleClose}
+        handleTrade={handleTrade}
+        handleTradeTokenSelect={handleTradeTokenSelect}
+        tokenToTradeFor={tokenToTradeFor}
+        handleTradeAmount={handleTradeAmount}
+        tradeAmount={tradeAmount}
+      />
       <Nav />
       {isLoading && <Spinner animation="grow" />}
 
@@ -233,6 +261,7 @@ function App() {
             balance={balanceOf.zero}
             id="0"
             image="https://bit.ly/3OSUDjw"
+            handleShow={handleShow}
           />
         </Col>
         <Col>
@@ -244,6 +273,7 @@ function App() {
             balance={balanceOf.one}
             id="1"
             image="https://bit.ly/3amkAc5"
+            handleShow={handleShow}
           />
         </Col>
         <Col>
@@ -255,6 +285,7 @@ function App() {
             balance={balanceOf.two}
             id="2"
             image="https://bit.ly/3uvNM7r"
+            handleShow={handleShow}
           />
         </Col>
       </Row>
@@ -266,7 +297,6 @@ function App() {
             id="3"
             image="https://bit.ly/3aqvEVx"
             handleShow={handleShow}
-            handleTrade={handleTrade}
           />
         </Col>
         <Col>
@@ -276,7 +306,6 @@ function App() {
             id="4"
             image="https://bit.ly/3nNpa6s"
             handleShow={handleShow}
-            handleTrade={handleTrade}
           />
         </Col>
         <Col>
@@ -286,7 +315,6 @@ function App() {
             id="5"
             image="https://bit.ly/3OPAbA7"
             handleShow={handleShow}
-            handleTrade={handleTrade}
           />
         </Col>
         <Col>
@@ -296,7 +324,6 @@ function App() {
             id="6"
             image="https://bit.ly/3Rgdpmu"
             handleShow={handleShow}
-            handleTrade={handleTrade}
           />
         </Col>
       </Row>

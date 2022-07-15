@@ -9,7 +9,7 @@ function MintableToken({
   balance,
   id,
   image,
-  handleShow,
+  handleShow
 }) {
   const unmintable = ["3", "4", "5", "6"];
   const tradable = balance > 0;
@@ -36,6 +36,11 @@ function MintableToken({
           />
         )}
       </Card.Body>
+      {tradable && (
+        <Button variant="outline-info" onClick={() => handleShow(id)}>
+          TRADE
+        </Button>
+      )}
       {!unmintable.includes(id) && (
         <>
           <Button
@@ -46,12 +51,6 @@ function MintableToken({
           </Button>
         </>
       )}
-      {unmintable.includes(id) &&
-        tradable && (
-          <Button variant="outline-info" onClick={() => handleShow(id)}>
-            TRADE
-          </Button>
-        )}
     </Card>
   );
 }
